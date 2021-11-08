@@ -1,23 +1,89 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import './App.css'
+import FloorplanCanvas from './components/FloorplanCanvas'
+import Logo from './components/Logo'
+import { CheckObjectForProperties, modalStyles } from './helpers/Helpers';
+import Modal from 'react-modal';
+
+const defaultInput = {
+  "width": 10,
+  "height": 10,
+  "floorplan": [
+    [1,1,1,1,1,1,1,1,1,1],
+    [1,1,1,0,0,0,1,0,1,1],
+    [1,0,0,0,0,0,0,0,1,1],
+    [1,0,1,1,1,1,1,0,1,1],
+    [1,0,0,1,0,0,0,0,1,1],
+    [1,0,0,1,0,0,0,0,0,1],
+    [1,1,0,1,0,1,1,1,0,1],
+    [1,1,0,0,0,0,0,1,0,1],
+    [1,1,0,0,0,0,0,1,1,1],
+    [1,1,1,1,1,1,1,1,1,1],
+  ]
+}
+
+const in2 = {
+  "width": 3,
+  "height": 3,
+  "floorplan": [
+    [0,1,0],
+    [1,1,1],
+    [0,1,0],
+  ]
+}
+
+Modal.setAppElement('#root');
 
 function App() {
+  const [input, setInput] = useState(JSON.stringify(in2))
+  const [modalIsOpen, setIsOpen] = useState(false)
+  const [inputError, setInputError] = useState("")
+  const [floorplan, setFloorplan] = useState(false)
+
+  const handleSubmit = () => {
+    let userInputObject;
+    try {
+      userInputObject = JSON.parse(input)
+      CheckObjectForProperties(userInputObject, ['floorplan', 'height', 'width'])
+    } catch (error) {
+      console.error(error)
+      setInputError("JSON was invalid. Check console for more details")
+      return
+    }
+    setFloorplan(userInputObject)
+    setIsOpen(false)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App" style={{'height': '100vh'}}>
+      <Logo />
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => {setIsOpen(false)}}
+        style={modalStyles}
+      >
+        <div className='modal-content'>
+          <h4>Enter your own input or use the provided default</h4>
+          { inputError ? <p style={{'color': 'red'}}>{inputError}</p> : <p>Valid JSON required</p>}
+          <textarea 
+            style={{'width': '80%', 'height': '40vh'}}
+            type="text"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+          ></textarea>
+          <button 
+            className="button-primary" 
+            style={{'marginTop': '20px'}}
+            onClick={() => {handleSubmit()}}>Submit</button>
+        </div>
+      </Modal>
+      { floorplan && 
+        <FloorplanCanvas input={floorplan} setInput={setFloorplan}/>}
+      { !floorplan && 
+        <div className='centered' style={{'width': '100%', 'height': '100%'}}>
+          <button className="button-primary" onClick={() => {setIsOpen(true)}}>Enter an input to begin</button>
+        </div>
+      }
     </div>
   );
 }
