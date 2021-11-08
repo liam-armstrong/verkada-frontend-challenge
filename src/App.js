@@ -2,40 +2,13 @@ import { useState } from 'react';
 import './App.css'
 import FloorplanCanvas from './components/FloorplanCanvas'
 import Logo from './components/Logo'
-import { CheckObjectForProperties, modalStyles } from './helpers/Helpers';
+import { CheckObjectForProperties, modalStyles, defaultInput } from './helpers/Helpers';
 import Modal from 'react-modal';
-
-const defaultInput = {
-  "width": 10,
-  "height": 10,
-  "floorplan": [
-    [1,1,1,1,1,1,1,1,1,1],
-    [1,1,1,0,0,0,1,0,1,1],
-    [1,0,0,0,0,0,0,0,1,1],
-    [1,0,1,1,1,1,1,0,1,1],
-    [1,0,0,1,0,0,0,0,1,1],
-    [1,0,0,1,0,0,0,0,0,1],
-    [1,1,0,1,0,1,1,1,0,1],
-    [1,1,0,0,0,0,0,1,0,1],
-    [1,1,0,0,0,0,0,1,1,1],
-    [1,1,1,1,1,1,1,1,1,1],
-  ]
-}
-
-const in2 = {
-  "width": 3,
-  "height": 3,
-  "floorplan": [
-    [0,1,0],
-    [1,1,1],
-    [0,1,0],
-  ]
-}
 
 Modal.setAppElement('#root');
 
 function App() {
-  const [input, setInput] = useState(JSON.stringify(in2))
+  const [input, setInput] = useState(JSON.stringify(defaultInput))
   const [modalIsOpen, setIsOpen] = useState(false)
   const [inputError, setInputError] = useState("")
   const [floorplan, setFloorplan] = useState(false)
